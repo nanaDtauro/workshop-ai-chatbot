@@ -2,7 +2,7 @@
 
 This repository implements an AI chatbot using Laravel `12.x` + Vue `3.x` + Tailwind CSS.
 
-The implementation example is configured as the bot being a TCG (Trading card game) expert agent.
+The implementation example is configured so the bot acts as a TCG (Trading card game) expert agent.
 
 ![TCG Chatbot sample](https://raw.githubusercontent.com/amostajo/workshop-ai-chatbot/refs/heads/main/storage/app/public/sample.jpg)
 
