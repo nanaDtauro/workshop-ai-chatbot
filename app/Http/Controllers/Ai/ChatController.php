@@ -54,7 +54,7 @@ class ChatController extends Controller
             'useFileSearch' => 'boolean',
         ]);
         if ($request->useAgent) {
-            $me = User::me();
+            $me = User::me()->first();
             return response()->json(
                 (new TcgAssitant(
                     user: $me,
@@ -113,7 +113,7 @@ class ChatController extends Controller
                 $markdown = new Markdown();
                 return response()->json([
                     'text' => $response->text()
-                        ? $markdown->setContent($response->text())->getHtml()
+                        ? $response->text()
                         : 'No response',
                     'sources' => $sources,
                 ]);

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+    import { computed } from 'vue';
+    import { marked } from 'marked';
+
     interface Message {
         role: string
         content: string
@@ -9,6 +12,10 @@
         message: Message
         role: string
     }>();
+
+    const content = computed(() => {
+        return marked.parse(props.message.content || props.message.text)
+    });
 </script>
 
 <style lang="scss">
@@ -43,7 +50,7 @@
         <div class="mb-2">
             <strong>{{ message.role === 'user' ? 'You' : (role || 'Aegent') }}:</strong>
         </div>
-        <div class="text-sm" style="white-space: pre-wrap;" v-html="message.content || message.text"/>
+        <div class="text-sm" style="white-space: pre-wrap;" v-html="content"/>
         <div v-if="message.sources?.length" class="sources mt-4">
             <small class="text-gray-400">Sources used:</small>
             <div>

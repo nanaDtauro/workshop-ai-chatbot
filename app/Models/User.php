@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -50,9 +51,25 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Scopes the query to the current user.
+     * @since 1.0.0
+     * 
+     * @return static
+     */
     public function scopeMe($query)
     {
-        return $query->where('email', 'you@testing.test')->first();
+        return $query->where('email', 'you@testing.test');
     }
 
+    /**
+     * User agent conversations.
+     * @since 1.0.0
+     * 
+     * @return HasMany
+     */
+    public function conversations(): HasMany
+    {
+        return $this->hasMany(AgentConversation::class);
+    }
 }
