@@ -22,6 +22,9 @@ class AgentConversationMessage extends Model
      */
     protected $table = 'agent_conversation_messages';
 
+    // Optional: Define custom primary key name
+    protected $primaryKey = 'string';
+
     /**
      * Fillable attributes.
      * @since 1.0.0
@@ -29,6 +32,7 @@ class AgentConversationMessage extends Model
      * @var array
      */
     protected $fillable = [
+        'id',
         'conversation_id',
         'user_id',
         'agent',

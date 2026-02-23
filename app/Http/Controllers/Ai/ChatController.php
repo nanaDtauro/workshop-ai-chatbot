@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Ai;
 
-
 use App\Ai\Agents\TcgAssitant;
 use App\Http\Controllers\Controller;
 use App\Models\UploadedFile;
@@ -11,6 +10,7 @@ use Exception;
 use FastVolt\Helper\Markdown;
 use Laravel\Ai\Enums\Lab;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Gemini;
@@ -35,7 +35,11 @@ class ChatController extends Controller
      */
     public function create(): Response
     {
+        $me = User::me()->first();
         return Inertia::render('Chat', [
+            'conversations' => $me->conversations()
+                ->orderBy('created_at', 'desc')
+                ->get(), 
             'role' => config('chatbot.role'),
         ]);
     }
@@ -49,6 +53,7 @@ class ChatController extends Controller
     public function chat(Request $request)
     {
         $request->validate([
+            'conversationId' => 'string|exists:agent_conversations,id',
             'message' => 'required|string|max:2000',
             'useAgent' => 'boolean',
             'useFileSearch' => 'boolean',
@@ -56,14 +61,21 @@ class ChatController extends Controller
         if ($request->useAgent) {
             $me = User::me()->first();
             return response()->json(
-                (new TcgAssitant(
-                    user: $me,
-                    language: 'Spanish',
-                ))->prompt(
-                    $request->message,
-                    provider: Lab::Gemini,
-                    model: config('services.gemini.model'),
-                )
+                empty($request->conversationId)
+                    ? (new TcgAssitant(language: 'English'))
+                        ->forUser($me)
+                        ->prompt(
+                            $request->message,
+                            provider: Lab::Gemini,
+                            model: config('services.gemini.model'),
+                        )
+                    : (new TcgAssitant(language: 'English'))
+                        ->continue($request->conversationId, as: $me)
+                        ->prompt(
+                            $request->message,
+                            provider: Lab::Gemini,
+                            model: config('services.gemini.model'),
+                        )
             );
         } else {
             try {
@@ -124,5 +136,46 @@ class ChatController extends Controller
                 ], 500);
             }
         }
+    }
+
+    /**
+     * Returns conversation messages.
+     * @since 1.0.0
+     * 
+     * @param Illuminate\Http\Request $request
+     */
+    public function messages(Request $request)
+    {
+        $request->validate([
+            'conversationId' => 'string|exists:agent_conversations,id',
+        ]);
+        $me = User::me()->first();
+        return response()->json(
+            $me->conversations()
+                ->where('id', $request->conversationId)
+                ->first()
+                ->messages()
+                ->orderBy('created_at', 'asc')
+                ->get()
+        );
+    }
+
+    /**
+     * Deletes a conversation.
+     * @since 1.0.0
+     * 
+     * @param string $conversationId
+     */
+    public function deleteConversation(string $conversationId)
+    {
+        $me = User::me()->first();
+        $conversation = $me->conversations()
+                ->where('id', $conversationId)
+                ->delete();
+        $me->conversations()
+                ->where('id', $conversationId)
+                ->delete();
+        return response()->json(true);
+
     }
 }

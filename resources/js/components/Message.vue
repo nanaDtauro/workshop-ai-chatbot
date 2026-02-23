@@ -20,13 +20,14 @@
 
 <style lang="scss">
     .message {
-        ul {
+        ul, ol {
             display: flex;
             flex-direction: column;
             padding: 0;
             margin: 0;
             li {
                 margin-left: 20px;
+                margin-bottom: 10px;
             }
         }
         ul {

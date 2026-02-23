@@ -2,7 +2,7 @@
 
 This repository implements an AI chatbot using Laravel `12.x` + Vue `3.x` + Tailwind CSS.
 
-The implementation example is configured so the bot acts as a TCG (Trading card game) expert agent.
+The implementation example is configured so the bot acts as a TCG (Trading card game) expert agent, the latest commited code uses [Laravel Ai SDK](https://laravel.com/docs/12.x/ai-sdk).
 
 ![TCG Chatbot sample](https://raw.githubusercontent.com/amostajo/workshop-ai-chatbot/refs/heads/main/storage/app/public/sample.jpg)
 
@@ -30,7 +30,7 @@ Use Laravel sail to start your local:
 ./vendor/bin/sail up -d
 ```
 
-Run migrations:
+Run migrations and seed:
 ```bash
 ./vendor/bin/sail artisan migrate
 ./vendor/bin/sail artisan db:seed
@@ -73,6 +73,8 @@ The repo comes pre-built with database seeds related to TCG, which can be popula
 
 #### Gemini: File search
 
+**NOTE:** Only available when not using Laravel AI agents.
+
 For Gemini, this context is uploaded as text files and saved into "file search stores", this is great for a small knowledge database, for a larger one you will need to opt for LLMs.
 
 ##### Upload DB context
@@ -83,6 +85,8 @@ The following command removes the existing context and uploads a new one.
 ```
 
 ##### Delete context
+
+**NOTE:** Only available when not using Laravel AI agents.
 
 The following command deletes all existing context uploaded to Gemini.
 ```bash

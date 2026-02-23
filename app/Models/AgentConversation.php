@@ -23,6 +23,9 @@ class AgentConversation extends Model
      */
     protected $table = 'agent_conversations';
 
+    // Optional: Define custom primary key name
+    protected $primaryKey = 'string';
+
     /**
      * Fillable attributes.
      * @since 1.0.0
@@ -30,6 +33,7 @@ class AgentConversation extends Model
      * @var array
      */
     protected $fillable = [
+        'id',
         'user_id',
         'title',
     ];
@@ -53,6 +57,6 @@ class AgentConversation extends Model
      */
     public function messages(): HasMany
     {
-        return $this->hasMany(AgentConversationMessage::class);
+        return $this->hasMany(AgentConversationMessage::class, 'conversation_id', 'id');  
     }
 }
